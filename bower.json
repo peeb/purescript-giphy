@@ -1,0 +1,14 @@
+{
+  "name": "purescript-giphy",
+  "private": true,
+  "dependencies": {
+    "purescript-affjax": "^5.0.0",
+    "purescript-argonaut": "^3.1.0",
+    "purescript-halogen": "^3.1.0",
+    "purescript-halogen-bootstrap": "^7.0.0",
+    "purescript-halogen-css": "^7.0.0"
+  },
+  "devDependencies": {
+    "purescript-psci-support": "^3.0.0"
+  }
+}
