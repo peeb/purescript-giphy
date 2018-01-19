@@ -1,4 +1,4 @@
-module App.Giphy (Gif(..), SearchTerm, getRandomGif) where
+module App.Giphy (SearchTerm, getRandomGif) where
 
 import Prelude
 
@@ -33,13 +33,12 @@ instance decodeGif :: DecodeJson Gif where
     url <- obj .? "image_url"
     pure $ Gif { url }
 
--- | Attempt to get a random `Gif` for the given search term.
--- | Return either `Just Gif` or `Nothing`.
-getRandomGif :: forall eff. SearchTerm -> Aff (ajax :: AX.AJAX | eff) (Maybe Gif)
+-- | Attempt to get a random `Gif` URL for the given search term.
+getRandomGif :: forall eff. SearchTerm -> Aff (ajax :: AX.AJAX | eff) (Maybe AX.URL)
 getRandomGif searchTerm = do
   result <- apiUrl searchTerm # AX.get
   pure $ case decodeJson result.response of
-    Right (GiphyResponse { gif }) -> Just gif
+    Right (GiphyResponse { gif: (Gif { url }) }) -> Just url
     Left _ -> Nothing
 
 -- | Build a Giphy API URL from the given search term
