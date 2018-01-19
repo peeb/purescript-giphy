@@ -1,4 +1,4 @@
-module App.Giphy (SearchTerm, getRandomGif) where
+module App.Giphy (GIF(..), SearchTerm, getRandom) where
 
 import Prelude
 
@@ -14,7 +14,7 @@ import Network.HTTP.Affjax as AX
 type SearchTerm = String
 
 -- | Type representing a Giphy API response
-newtype GiphyResponse = GiphyResponse { gif :: Gif }
+newtype GiphyResponse = GiphyResponse { gif :: GIF }
 
 -- | `DecodeJson` instance for `GiphyResponse` type
 instance decodeGiphyResponse :: DecodeJson GiphyResponse where
@@ -23,22 +23,22 @@ instance decodeGiphyResponse :: DecodeJson GiphyResponse where
     gif <- obj .? "data"
     pure $ GiphyResponse { gif }
 
--- | Type representing a Giphy GIF
-newtype Gif = Gif { url :: AX.URL }
+-- | Type representing a GIF
+newtype GIF = GIF { url :: AX.URL }
 
--- | `DecodeJson` instance for `Gif` type
-instance decodeGif :: DecodeJson Gif where
+-- | `DecodeJson` instance for `GIF` type
+instance decodeGif :: DecodeJson GIF where
   decodeJson json = do
     obj <- decodeJson json
     url <- obj .? "image_url"
-    pure $ Gif { url }
+    pure $ GIF { url }
 
--- | Attempt to get a random `Gif` URL for the given search term.
-getRandomGif :: forall eff. SearchTerm -> Aff (ajax :: AX.AJAX | eff) (Maybe AX.URL)
-getRandomGif searchTerm = do
+-- | Get a random `GIF` for the given search term.
+getRandom :: forall eff. SearchTerm -> Aff (ajax :: AX.AJAX | eff) (Maybe GIF)
+getRandom searchTerm = do
   result <- apiUrl searchTerm # AX.get
   pure $ case decodeJson result.response of
-    Right (GiphyResponse { gif: (Gif { url }) }) -> Just url
+    Right (GiphyResponse { gif }) -> Just gif
     Left _ -> Nothing
 
 -- | Build a Giphy API URL from the given search term

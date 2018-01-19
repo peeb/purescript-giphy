@@ -14,13 +14,13 @@ import Halogen.Themes.Bootstrap3 as HB
 
 import Network.HTTP.Affjax as AX
 
-import App.Giphy (SearchTerm, getRandomGif)
+import App.Giphy (GIF(..), SearchTerm, getRandom)
 
 -- | Component state
 type State =
   { loading :: Boolean
   , searchTerm :: SearchTerm
-  , result :: Maybe AX.URL
+  , result :: Maybe GIF
   }
 
 -- | Component query algebra
@@ -71,13 +71,19 @@ ui =
               , HE.onClick $ HE.input_ MakeRequest
               ]
               [ HH.text "Go!" ]
-          , HH.p_ [ HH.text $ if loading then "Searching..." else "" ]
+          , HH.p_ [ HH.text $ if loading then "Working..." else "" ]
           , HH.div_
-              case result of
-                Nothing -> []
-                Just url -> [ HH.img [ HP.src url ] ]
+              [ HH.img [ HP.src url ] ]
           ]
       ]
+      where
+
+        url :: AX.URL
+        url =
+          case result of
+            Nothing -> "./default.gif"
+            Just (GIF { url }) -> url
+
 
   eval :: Query ~> H.ComponentDSL State Query Void (Aff (ajax :: AX.AJAX | eff))
   eval = case _ of
@@ -87,6 +93,6 @@ ui =
     MakeRequest next -> do
       H.modify $ _ { loading = true }
       searchTerm <- H.gets _.searchTerm
-      url <- getRandomGif searchTerm # H.liftAff
-      H.modify $ _ { loading = false, result = url }
+      gif <- getRandom searchTerm # H.liftAff
+      H.modify $ _ { loading = false, result = gif }
       pure next
