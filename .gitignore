@@ -2,5 +2,4 @@
 !/.gitignore
 /dist/app.js
 /output/
-/bower_components/
 /node_modules/
