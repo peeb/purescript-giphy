@@ -53,27 +53,23 @@ ui =
           [ HP.class_ HB.jumbotron ]
           [ HH.div
               [ HP.class_ HB.container ]
-              [ HH.text "PureScript GIF-o-matic" ]
+              [ HH.text "GIF-o-matic" ]
           ]
       , HH.form
           [ HP.class_ HB.container ]
-          [ HH.label_
-              [ HH.div_
-                  [ HH.text "Enter a search term" ]
-              , HH.input
-                  [ HP.value searchTerm
-                  , HE.onValueInput $ HE.input SetSearchTerm
-                  ]
+          [ HH.input
+              [ HP.placeholder "Enter search term"
+              , HE.onValueInput $ HE.input SetSearchTerm
+              , HP.value searchTerm
               ]
           , HH.button
-              [ HP.classes [ HB.btn, HB.btnSuccess ]
+              [ HP.classes [ HB.btn, HB.btnPrimary ]
               , HP.disabled loading
               , HE.onClick $ HE.input_ MakeRequest
               ]
               [ HH.text "Go!" ]
           , HH.p_ [ HH.text $ if loading then "Working..." else "" ]
-          , HH.div_
-              [ HH.img [ HP.src url ] ]
+          , HH.div_ [ HH.img [ HP.src url ] ]
           ]
       ]
       where
@@ -82,7 +78,7 @@ ui =
         url =
           case result of
             Nothing -> "./default.gif"
-            Just (GIF { url }) -> url
+            Just (GIF gif) -> gif.url
 
 
   eval :: Query ~> H.ComponentDSL State Query Void (Aff (ajax :: AX.AJAX | eff))
