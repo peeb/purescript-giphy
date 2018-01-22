@@ -1,5 +1,5 @@
 {
-  "name": "purescript-giphy",
+  "name": "gif-o-matic",
   "set": "psc-0.11.7",
   "source": "https://github.com/purescript/package-sets.git",
   "depends": [
@@ -7,7 +7,6 @@
     "argonaut",
     "halogen",
     "halogen-bootstrap",
-    "halogen-css",
     "prelude"
   ]
 }
