@@ -48,13 +48,7 @@ ui =
   render :: State -> H.ComponentHTML Query
   render { loading, result, searchTerm } =
     HH.div_ $
-      [ HH.header
-          [ HP.class_ HB.jumbotron ]
-          [ HH.div
-              [ HP.class_ HB.container ]
-              [ HH.h1_ [ HH.text "GIF-o-matic" ] ]
-          ]
-      , HH.form
+      [ HH.form
           [ HP.class_ HB.container ]
           [ HH.div
               [ HP.class_ HB.formGroup ]
