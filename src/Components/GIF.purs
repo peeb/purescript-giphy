@@ -47,7 +47,7 @@ ui =
 
   render :: State -> H.ComponentHTML Query
   render { loading, result, searchTerm } =
-    HH.div_ $
+    HH.section_ $
       [ HH.form
           [ HP.class_ HB.container ]
           [ HH.div
@@ -70,7 +70,8 @@ ui =
                   [ HP.class_ HB.textMuted ]
                   [ HH.text $ if loading then "Working..." else "" ]
               ]
-          , HH.div_ [ HH.img [ HP.src url ] ]
+          , HH.div_
+              [ HH.img [ HP.src url ] ]
           ]
       ]
       where
@@ -80,7 +81,6 @@ ui =
           case result of
             Nothing -> "./default.gif"
             Just (GIF gif) -> gif.url
-
 
   eval :: Query ~> H.ComponentDSL State Query Void (Aff (ajax :: AX.AJAX | eff))
   eval = case _ of
