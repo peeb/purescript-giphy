@@ -49,18 +49,22 @@ ui =
   render :: State -> H.ComponentHTML Query
   render { loading, result, searchTerm } =
     HH.div_ $
-      [ HH.h1
+      [ HH.header
           [ HP.class_ HB.jumbotron ]
           [ HH.div
               [ HP.class_ HB.container ]
-              [ HH.text "GIF-o-matic" ]
+              [ HH.h1_ [ HH.text "GIF-o-matic" ] ]
           ]
       , HH.form
           [ HP.class_ HB.container ]
-          [ HH.input
-              [ HP.placeholder "Enter search term"
-              , HE.onValueInput $ HE.input SetSearchTerm
-              , HP.value searchTerm
+          [ HH.div
+              [ HP.class_ HB.formGroup ]
+              [ HH.input
+                  [ HP.class_ HB.formControl
+                  , HP.placeholder "Enter search term"
+                  , HE.onValueInput $ HE.input SetSearchTerm
+                  , HP.value searchTerm
+                  ]
               ]
           , HH.button
               [ HP.classes [ HB.btn, HB.btnPrimary ]
