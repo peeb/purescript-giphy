@@ -1,4 +1,4 @@
-module App.Giphy (GIF(..), SearchTerm, getRandom) where
+module Data.Giphy (GIF(..), SearchTerm, getRandom) where
 
 import Prelude
 

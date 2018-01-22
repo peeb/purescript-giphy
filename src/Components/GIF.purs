@@ -1,9 +1,10 @@
-module App.Component (Query(..), State, ui) where
+module Components.GIF (Query(..), State, ui) where
 
 import Prelude
 
 import Control.Monad.Aff (Aff)
 
+import Data.Giphy (GIF(..), SearchTerm, getRandom)
 import Data.Maybe (Maybe(..))
 
 import Halogen as H
@@ -13,8 +14,6 @@ import Halogen.HTML.Properties as HP
 import Halogen.Themes.Bootstrap3 as HB
 
 import Network.HTTP.Affjax as AX
-
-import App.Giphy (GIF(..), SearchTerm, getRandom)
 
 -- | Component state
 type State =
