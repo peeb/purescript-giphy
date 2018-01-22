@@ -71,7 +71,11 @@ ui =
               , HE.onClick $ HE.input_ MakeRequest
               ]
               [ HH.text "Go!" ]
-          , HH.p_ [ HH.text $ if loading then "Working..." else "" ]
+          , HH.p_
+              [ HH.small
+                  [ HP.class_ HB.textMuted ]
+                  [ HH.text $ if loading then "Working..." else "" ]
+              ]
           , HH.div_ [ HH.img [ HP.src url ] ]
           ]
       ]
