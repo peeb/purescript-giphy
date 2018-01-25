@@ -4,6 +4,7 @@
     "source": "https://github.com/purescript/package-sets.git",
     "depends": [
         "halogen-bootstrap",
+        "halogen-css",
         "psci-support",
         "affjax",
         "argonaut",
