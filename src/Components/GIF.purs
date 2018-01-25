@@ -71,16 +71,13 @@ ui =
                   [ HH.text $ if loading then "Working..." else "" ]
               ]
           , HH.div_
-              [ HH.img [ HP.src url ] ]
+              case result of
+                Nothing ->
+                  [ HH.p_ [ HH.text "Nothing to see here... (yet)" ] ]
+                Just (GIF { url }) ->
+                  [ HH.img [ HP.src url ] ]
           ]
       ]
-      where
-
-        url :: AX.URL
-        url =
-          case result of
-            Nothing -> "./default.gif"
-            Just (GIF gif) -> gif.url
 
   eval :: Query ~> H.ComponentDSL State Query Void (Aff (ajax :: AX.AJAX | eff))
   eval = case _ of
