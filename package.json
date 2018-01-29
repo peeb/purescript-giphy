@@ -3,7 +3,7 @@
   "scripts": {
     "build": "pulp build --to dist/app.js",
     "postinstall": "./bin/psc-package update",
-    "watch": "pulp --watch build --to dist/app.js"
+    "start": "pulp --watch build --to dist/app.js"
   },
   "devDependencies": {
     "pulp": "^12.0.1",
