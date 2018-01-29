@@ -4,7 +4,7 @@ import Prelude
 
 import Control.Monad.Aff (Aff)
 
-import Data.Giphy (GIF(..), SearchTerm, getRandom)
+import Data.Giphy (SearchTerm, getRandom)
 import Data.Maybe (Maybe(..))
 
 import Halogen as H
@@ -19,7 +19,7 @@ import Network.HTTP.Affjax as AX
 type State =
   { loading :: Boolean
   , searchTerm :: SearchTerm
-  , result :: Maybe GIF
+  , result :: Maybe AX.URL
   }
 
 -- | Component query algebra
@@ -71,16 +71,17 @@ ui =
                   [ HH.text $ if loading then "Working..." else "" ]
               ]
           , HH.div_
-              [ HH.img [ HP.src url ] ]
+              case result of
+                Nothing ->
+                  [ HH.p_
+                      [ HH.text "Nothing to see here... (yet)" ]
+                  ]
+                Just url ->
+                  [ HH.img
+                      [ HP.src url ]
+                  ]
           ]
       ]
-      where
-
-        url :: AX.URL
-        url =
-          case result of
-            Nothing -> "./default.gif"
-            Just (GIF gif) -> gif.url
 
   eval :: Query ~> H.ComponentDSL State Query Void (Aff (ajax :: AX.AJAX | eff))
   eval = case _ of
@@ -90,6 +91,6 @@ ui =
     MakeRequest next -> do
       H.modify $ _ { loading = true }
       searchTerm <- H.gets _.searchTerm
-      gif <- getRandom searchTerm # H.liftAff
-      H.modify $ _ { loading = false, result = gif }
+      url <- getRandom searchTerm # H.liftAff
+      H.modify $ _ { loading = false, result = url }
       pure next
