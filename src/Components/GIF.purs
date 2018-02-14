@@ -77,8 +77,13 @@ ui =
                       [ HH.text "Nothing to see here... (yet)" ]
                   ]
                 Just url ->
+                  let label = "Random " <> searchTerm <> " GIF"
+                  in
                   [ HH.img
-                      [ HP.src url ]
+                      [ HP.alt label
+                      , HP.src url
+                      , HP.title label
+                      ]
                   ]
           ]
       ]
