@@ -65,7 +65,7 @@ ui =
               , HE.onClick $ HE.input_ MakeRequest
               ]
               [ HH.text "Go!" ]
-          , HH.p_
+          , HH.div_
               [ HH.small
                   [ HP.class_ HB.textMuted ]
                   [ HH.text $ if loading then "Working..." else "" ]
