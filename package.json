@@ -2,7 +2,7 @@
   "private": true,
   "scripts": {
     "build": "pulp build --to dist/app.js",
-    "postinstall": "psc-package update",
+    "postinstall": "psc-package install",
     "start": "pulp --watch build --to dist/app.js"
   },
   "devDependencies": {
