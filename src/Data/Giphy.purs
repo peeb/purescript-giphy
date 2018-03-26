@@ -44,7 +44,8 @@ instance showGIF :: Show GIF where
 getRandom :: forall eff. SearchTerm -> Aff (ajax :: AX.AJAX | eff) (Maybe GIF)
 getRandom searchTerm = do
   result <- apiUrl searchTerm # AX.get
-  pure $ case runExcept $ decode result.response of
+  let response = runExcept $ decode result.response
+  pure $ case response of
     Right (GiphyResponse { data: gif }) -> Just gif
     Left _ -> Nothing
 
@@ -53,6 +54,6 @@ apiUrl :: SearchTerm -> AX.URL
 apiUrl searchTerm =
   let
     apiKey  = "dc6zaTOxFJmzC"
-    baseURL = "http://api.giphy.com/v1/gifs/random"
+    baseURL = "https://api.giphy.com/v1/gifs/random"
   in
     baseURL <> "?api_key=" <> apiKey <> "&tag=" <> searchTerm
