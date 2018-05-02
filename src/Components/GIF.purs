@@ -15,19 +15,16 @@ import Halogen.Themes.Bootstrap3 as HB
 
 import Network.HTTP.Affjax as AX
 
--- | Component state
 type State =
   { loading :: Boolean
   , searchTerm :: SearchTerm
   , result :: Maybe GIF
   }
 
--- | Component query algebra
 data Query a
   = SetSearchTerm SearchTerm a
   | MakeRequest a
 
--- | Component definition
 ui :: forall eff. H.Component HH.HTML Query Unit Void (Aff (ajax :: AX.AJAX | eff))
 ui =
   H.component

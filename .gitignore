@@ -1,5 +1,5 @@
 /.*
 !/.gitignore
-/dist/app.js
+/bundle.js
 /output/
 /node_modules/

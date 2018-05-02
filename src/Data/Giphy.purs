@@ -15,28 +15,30 @@ import Data.Maybe (Maybe(..))
 
 import Network.HTTP.Affjax as AX
 
--- | Type alias for SearchTerm
 type SearchTerm = String
 
--- | Foreign data decoder options
 decoderOptions :: Options
 decoderOptions = defaultOptions { unwrapSingleConstructors = true }
 
--- | Type representing a Giphy API response
 newtype GiphyResponse = GiphyResponse { data :: GIF }
+
 derive instance genericGiphyResponse :: Generic GiphyResponse _
+
 instance decodeGiphyResponse :: Decode GiphyResponse where
   decode = genericDecode decoderOptions
+
 instance showGiphyResponse :: Show GiphyResponse where
   show = genericShow
 
--- | Type representing a GIF
 newtype GIF = GIF { image_url :: AX.URL
                   , title :: String
                   }
+
 derive instance genericGIF :: Generic GIF _
+
 instance decodeGIF :: Decode GIF where
   decode = genericDecode decoderOptions
+
 instance showGIF :: Show GIF where
   show = genericShow
 
@@ -49,7 +51,6 @@ getRandom searchTerm = do
     Right (GiphyResponse { data: gif }) -> Just gif
     Left _ -> Nothing
 
--- | Build a Giphy API URL from the given search term
 apiUrl :: SearchTerm -> AX.URL
 apiUrl searchTerm =
   let
