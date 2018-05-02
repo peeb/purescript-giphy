@@ -3,9 +3,8 @@
   "scripts": {
     "build": "pulp build --to bundle.js",
     "postinstall": "psc-package install",
-    "psc-package:update": "psc-package updates",
+    "psc-package:updates": "psc-package updates",
     "start": "pulp --watch build --to bundle.js",
-    "update": "psc-package updates",
     "webpack": "DEBUG=purs-loader webpack --progress --bail",
     "webpack:watch": "webpack --progress --watch",
     "webpack:server": "webpack-dev-server --progress --inline --hot",
