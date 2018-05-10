@@ -1,4 +1,4 @@
-module Data.Giphy (GIF(..), SearchTerm, getRandom) where
+module Data.Giphy (GIF(..), SearchTerm, apiUrl, getRandom) where
 
 import Prelude
 
@@ -45,11 +45,11 @@ instance showGIF :: Show GIF where
 -- | Get a random GIF for the given search term
 getRandom :: forall eff. SearchTerm -> Aff (ajax :: AX.AJAX | eff) (Maybe GIF)
 getRandom searchTerm = do
-  result <- apiUrl searchTerm # AX.get
+  result <- AX.get $ apiUrl searchTerm
   let response = runExcept $ decode result.response
   pure $ case response of
     Right (GiphyResponse { data: gif }) -> Just gif
-    Left _ -> Nothing
+    Left _                              -> Nothing
 
 apiUrl :: SearchTerm -> AX.URL
 apiUrl searchTerm =

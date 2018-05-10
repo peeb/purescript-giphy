@@ -30,7 +30,7 @@ yarn start
 Open the app in a browser:
 
 ```shell
-open index.html
+open dist/index.html
 ```
 
 [node]: https://nodejs.org/
