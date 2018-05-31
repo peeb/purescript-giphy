@@ -1,10 +1,9 @@
-module Components.GIF (Query(..), State, ui) where
+module App.Components.GIF (Query(..), State, ui) where
 
 import Prelude
 
 import Control.Monad.Aff (Aff)
 
-import Data.Giphy (GIF(..), SearchTerm, getRandom)
 import Data.Maybe (Maybe(..))
 
 import Halogen as H
@@ -12,13 +11,14 @@ import Halogen.HTML as HH
 import Halogen.HTML.Events  as HE
 import Halogen.HTML.Properties as HP
 import Halogen.Themes.Bootstrap3 as HB
-
 import Network.HTTP.Affjax as AX
 
+import App.Giphy (GIF(..), SearchTerm, getRandom)
+
 type State =
-  { loading :: Boolean
+  { loading    :: Boolean
   , searchTerm :: SearchTerm
-  , result :: Maybe GIF
+  , result     :: Maybe GIF
   }
 
 data Query a
@@ -34,7 +34,6 @@ ui =
     , receiver: const Nothing
     }
   where
-
   initialState :: State
   initialState =
     { loading: false
@@ -73,10 +72,10 @@ ui =
                   [ HH.p_
                       [ HH.text "Nothing to see here... (yet)" ]
                   ]
-                Just (GIF { image_url, title }) ->
+                Just (GIF { title, url }) ->
                   [ HH.img
                       [ HP.alt title
-                      , HP.src image_url
+                      , HP.src url
                       , HP.title title
                       ]
                   ]
@@ -85,12 +84,12 @@ ui =
 
   eval :: Query ~> H.ComponentDSL State Query Void (Aff (ajax :: AX.AJAX | eff))
   eval = case _ of
-    SetSearchTerm searchTerm next  -> do
+    SetSearchTerm searchTerm next -> do
       H.modify $ _ { searchTerm = searchTerm }
       pure next
     MakeRequest next -> do
       H.modify $ _ { loading = true }
       searchTerm <- H.gets _.searchTerm
-      gif <- getRandom searchTerm # H.liftAff
-      H.modify $ _ { loading = false, result = gif }
+      result <- H.liftAff $ getRandom searchTerm
+      H.modify $ _ { loading = false, result = result }
       pure next
