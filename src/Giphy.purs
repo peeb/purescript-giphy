@@ -1,4 +1,4 @@
-module App.Giphy (GIF(..), SearchTerm, apiURL, getRandom) where
+module Giphy (GIF(..), SearchTerm, apiURL, getRandom) where
 
 import Prelude
 
@@ -8,14 +8,14 @@ import Data.Argonaut (class DecodeJson, decodeJson, (.?))
 import Data.Either (Either(..))
 import Data.Maybe (Maybe(..))
 
-import Network.HTTP.Affjax as AX
+import Network.HTTP.Affjax (AJAX, URL, get)
 
 type APIKey     = String
 type SearchTerm = String
 
 newtype GIF =
   GIF { title :: String
-      , url   :: AX.URL
+      , url   :: URL
       }
 
 instance decodeJsonGIF :: DecodeJson GIF where
@@ -26,9 +26,9 @@ instance decodeJsonGIF :: DecodeJson GIF where
     pure $ GIF { title, url }
 
 -- | Get a random `GIF` for the given search term
-getRandom :: forall eff. SearchTerm -> Aff (ajax :: AX.AJAX | eff) (Maybe GIF)
+getRandom :: forall eff. SearchTerm -> Aff (ajax :: AJAX | eff) (Maybe GIF)
 getRandom searchTerm = do
-  response <- AX.get $ apiURL searchTerm
+  response <- get $ apiURL searchTerm
   let result = do
         o <- decodeJson response.response
         d <- o .? "data"
@@ -37,7 +37,7 @@ getRandom searchTerm = do
     Right (GIF gif) -> Just $ GIF gif
     Left _          -> Nothing
 
-apiURL :: SearchTerm -> AX.URL
+apiURL :: SearchTerm -> URL
 apiURL searchTerm =
   let
     baseURL = "https://api.giphy.com/v1/gifs/random"

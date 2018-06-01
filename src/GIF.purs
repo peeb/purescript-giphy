@@ -1,4 +1,4 @@
-module App.Components.GIF (Query(..), State, ui) where
+module GIF (Query(..), State, ui) where
 
 import Prelude
 
@@ -11,9 +11,10 @@ import Halogen.HTML as HH
 import Halogen.HTML.Events  as HE
 import Halogen.HTML.Properties as HP
 import Halogen.Themes.Bootstrap3 as HB
-import Network.HTTP.Affjax as AX
 
-import App.Giphy (GIF(..), SearchTerm, getRandom)
+import Network.HTTP.Affjax (AJAX)
+
+import Giphy (GIF(..), SearchTerm, getRandom)
 
 type State =
   { loading    :: Boolean
@@ -25,7 +26,7 @@ data Query a
   = SetSearchTerm SearchTerm a
   | MakeRequest a
 
-ui :: forall eff. H.Component HH.HTML Query Unit Void (Aff (ajax :: AX.AJAX | eff))
+ui :: forall eff. H.Component HH.HTML Query Unit Void (Aff (ajax :: AJAX | eff))
 ui =
   H.component
     { initialState: const initialState
@@ -45,7 +46,7 @@ ui =
   render { loading, result, searchTerm } =
     HH.section_ $
       [ HH.form
-          [ HP.class_ HB.container ]
+          [ HP.class_ $ H.ClassName "container" ]
           [ HH.div
               [ HP.class_ HB.formGroup ]
               [ HH.input
@@ -68,10 +69,7 @@ ui =
               ]
           , HH.div_
               case result of
-                Nothing ->
-                  [ HH.p_
-                      [ HH.text "Nothing to see here... (yet)" ]
-                  ]
+                Nothing -> []
                 Just (GIF { title, url }) ->
                   [ HH.img
                       [ HP.alt title
@@ -82,7 +80,7 @@ ui =
           ]
       ]
 
-  eval :: Query ~> H.ComponentDSL State Query Void (Aff (ajax :: AX.AJAX | eff))
+  eval :: Query ~> H.ComponentDSL State Query Void (Aff (ajax :: AJAX | eff))
   eval = case _ of
     SetSearchTerm searchTerm next -> do
       H.modify $ _ { searchTerm = searchTerm }

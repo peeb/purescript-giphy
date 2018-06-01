@@ -9,7 +9,7 @@ import Halogen.VDom.Driver (runUI)
 
 import Network.HTTP.Affjax (AJAX)
 
-import App.Components.GIF (ui)
+import GIF (ui)
 
 main :: Eff (HalogenEffects (ajax :: AJAX)) Unit
 main = runHalogenAff do

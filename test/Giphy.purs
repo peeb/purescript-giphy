@@ -1,11 +1,11 @@
-module Test.App.Giphy (giphyAPI) where
+module Test.Giphy (giphyAPI) where
 
 import Prelude
 
 import Test.Spec (Spec, describe, it)
 import Test.Spec.Assertions (shouldEqual)
 
-import App.Giphy (apiURL)
+import Giphy (apiURL)
 
 -- | Tests for the Giphy API module
 giphyAPI :: forall r. Spec r Unit
