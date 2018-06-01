@@ -10,7 +10,6 @@ import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Events  as HE
 import Halogen.HTML.Properties as HP
-import Halogen.Themes.Bootstrap3 as HB
 
 import Network.HTTP.Affjax (AJAX)
 
@@ -44,40 +43,35 @@ ui =
 
   render :: State -> H.ComponentHTML Query
   render { loading, result, searchTerm } =
-    HH.section_ $
-      [ HH.form
-          [ HP.class_ $ H.ClassName "container" ]
-          [ HH.div
-              [ HP.class_ HB.formGroup ]
+    HH.section [ HP.class_ $ H.ClassName "container" ] $
+      [ HH.div [ HP.class_ $ H.ClassName "field" ]
+          [ HH.div [ HP.class_ $ H.ClassName "control" ]
               [ HH.input
-                  [ HP.class_ HB.formControl
+                  [ HP.class_ $ H.ClassName "input"
                   , HP.placeholder "Enter search term"
                   , HE.onValueInput $ HE.input SetSearchTerm
                   , HP.value searchTerm
                   ]
               ]
-          , HH.button
-              [ HP.classes [ HB.btn, HB.btnPrimary ]
-              , HP.disabled loading
-              , HE.onClick $ HE.input_ MakeRequest
-              ]
-              [ HH.text "Go!" ]
-          , HH.div_
-              [ HH.small
-                  [ HP.class_ HB.textMuted ]
-                  [ HH.text $ if loading then "Working..." else "" ]
-              ]
-          , HH.div_
-              case result of
-                Nothing -> []
-                Just (GIF { title, url }) ->
-                  [ HH.img
-                      [ HP.alt title
-                      , HP.src url
-                      , HP.title title
-                      ]
-                  ]
           ]
+       , HH.div [ HP.class_ $ H.ClassName "control" ]
+           [ HH.button
+               [ HP.class_ $ H.ClassName "button"
+               , HP.disabled loading
+               , HE.onClick $ HE.input_ MakeRequest
+               ]
+               [ HH.text "Go!" ]
+           ]
+       , HH.section [ HP.class_ $ H.ClassName "container" ]
+           case result of
+             Nothing -> []
+             Just (GIF { title, url }) ->
+               [ HH.img
+                   [ HP.alt title
+                   , HP.src url
+                   , HP.title title
+                   ]
+               ]
       ]
 
   eval :: Query ~> H.ComponentDSL State Query Void (Aff (ajax :: AJAX | eff))
