@@ -1,9 +1,11 @@
-module GIF (Query(..), State, ui) where
+module Components.GIF where
 
 import Prelude
 
 import Control.Monad.Aff (Aff)
 
+import Data.Argonaut (class DecodeJson, decodeJson, (.?))
+import Data.Either (Either(..))
 import Data.Maybe (Maybe(..))
 
 import Halogen as H
@@ -12,9 +14,42 @@ import Halogen.HTML.Events  as HE
 import Halogen.HTML.Properties as HP
 import Halogen.Themes.Bulma as HB
 
-import Network.HTTP.Affjax (AJAX)
+import Network.HTTP.Affjax (AJAX, URL, get)
 
-import Giphy (GIF(..), SearchTerm, getRandom)
+type APIKey     = String
+type SearchTerm = String
+
+newtype GIF =
+  GIF { title :: String
+      , url   :: URL
+      }
+
+instance decodeJsonGIF :: DecodeJson GIF where
+  decodeJson json = do
+    o <- decodeJson json
+    url <- o .? "image_url"
+    title <- o .? "title"
+    pure $ GIF { title, url }
+
+-- | Get a random `GIF` for the given search term
+getRandomGIF :: forall eff. SearchTerm -> Aff (ajax :: AJAX | eff) (Maybe GIF)
+getRandomGIF searchTerm = do
+  response <- get $ apiURL searchTerm
+  let result = do
+        o <- decodeJson response.response
+        d <- o .? "data"
+        decodeJson d
+  pure $ case result of
+    Right (GIF gif) -> Just $ GIF gif
+    Left _          -> Nothing
+
+apiURL :: SearchTerm -> URL
+apiURL searchTerm =
+  let
+    baseURL = "https://api.giphy.com/v1/gifs/random"
+    apiKey  = "dc6zaTOxFJmzC"
+  in
+  baseURL <> "?api_key=" <> apiKey <> "&tag=" <> searchTerm
 
 type State =
   { loading    :: Boolean
@@ -44,22 +79,18 @@ ui =
 
   render :: State -> H.ComponentHTML Query
   render { loading, result, searchTerm } =
-    HH.section
-      [ HP.class_ HB.container ] $
-      [ HH.div
-          [ HP.class_ HB.field ]
-          [ HH.div
-              [ HP.class_ HB.control ]
+    HH.section [ HP.class_ HB.container ] $
+      [ HH.div [ HP.class_ HB.field ]
+          [ HH.div [ HP.class_ HB.control ]
               [ HH.input
-              [ HP.class_ HB.input
+                  [ HP.class_ HB.input
                   , HP.placeholder "Enter search term"
                   , HE.onValueInput $ HE.input SetSearchTerm
                   , HP.value searchTerm
                   ]
               ]
           ]
-      , HH.div
-          [ HP.class_ HB.control ]
+      , HH.div [ HP.class_ HB.control ]
           [ HH.button
               [ HP.classes [ HB.button, HB.isPrimary ]
               , HP.disabled loading
@@ -67,8 +98,7 @@ ui =
               ]
               [ HH.text "Go!" ]
           ]
-      , HH.div
-          [ HP.class_ HB.container ]
+      , HH.div [ HP.class_ HB.container ]
           case result of
             Nothing -> []
             Just (GIF { title, url }) ->
@@ -91,6 +121,6 @@ ui =
     MakeRequest next -> do
       H.modify $ _ { loading = true }
       searchTerm <- H.gets _.searchTerm
-      result <- H.liftAff $ getRandom searchTerm
+      result <- H.liftAff $ getRandomGIF searchTerm
       H.modify $ _ { loading = false, result = result }
       pure next
