@@ -4,7 +4,7 @@ import Prelude
 
 import Control.Monad.Aff (Aff)
 
-import Data.Argonaut (class DecodeJson, decodeJson, (.?))
+import Data.Argonaut (class DecodeJson, (.?), decodeJson)
 import Data.Either (Either(..))
 import Data.Maybe (Maybe(..))
 

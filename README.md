@@ -27,5 +27,13 @@ Open the app in a browser:
 open dist/index.html
 ```
 
+## Test
+
+To run the project's tests:
+
+```shell
+yarn test
+```
+
 [node]: https://nodejs.org/
 [yarn]: https://yarnpkg.com/
