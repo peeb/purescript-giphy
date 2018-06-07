@@ -52,7 +52,7 @@ apiURL searchTerm =
   baseURL <> "?api_key=" <> apiKey <> "&tag=" <> searchTerm
 
 type State =
-  { loading    :: Boolean
+  { isLoading  :: Boolean
   , searchTerm :: SearchTerm
   , result     :: Maybe GIF
   }
@@ -72,13 +72,13 @@ ui =
   where
   initialState :: State
   initialState =
-    { loading: false
+    { isLoading: false
     , searchTerm: ""
     , result: Nothing
     }
 
   render :: State -> H.ComponentHTML Query
-  render { loading, result, searchTerm } =
+  render { isLoading, result, searchTerm } =
     HH.section [ HP.class_ HB.container ] $
       [ HH.div [ HP.class_ HB.field ]
           [ HH.div [ HP.class_ HB.control ]
@@ -93,7 +93,7 @@ ui =
       , HH.div [ HP.class_ HB.control ]
           [ HH.button
               [ HP.classes [ HB.button, HB.isPrimary ]
-              , HP.disabled loading
+              , HP.disabled isLoading
               , HE.onClick $ HE.input_ MakeRequest
               ]
               [ HH.text "Go!" ]
@@ -102,12 +102,18 @@ ui =
           case result of
             Nothing -> []
             Just (GIF { title, url }) ->
-              [ HH.figure
-                  [ HP.classes [ HB.figure, HB.is3By2 ] ]
-                  [ HH.img
-                      [ HP.alt title
-                      , HP.src url
-                      , HP.title title
+              [ HH.div_
+                  [ HH.div [ HP.classes [ HB.notification, HB.isInfo ] ]
+                      [ HH.button [ HP.class_ HB.delete ] []
+                      , HH.text "Found the following GIF!"
+                      ]
+                  , HH.figure
+                      [ HP.classes [ HB.figure, HB.is3By2 ] ]
+                      [ HH.img
+                          [ HP.alt title
+                          , HP.src url
+                          , HP.title title
+                          ]
                       ]
                   ]
               ]
@@ -119,8 +125,8 @@ ui =
       H.modify $ _ { searchTerm = searchTerm }
       pure next
     MakeRequest next -> do
-      H.modify $ _ { loading = true }
+      H.modify $ _ { isLoading = true }
       searchTerm <- H.gets _.searchTerm
       result <- H.liftAff $ getRandomGIF searchTerm
-      H.modify $ _ { loading = false, result = result }
+      H.modify $ _ { isLoading = false, result = result }
       pure next

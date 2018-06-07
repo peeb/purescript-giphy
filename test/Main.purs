@@ -11,15 +11,15 @@ import Test.Spec.Runner (RunnerEffects, run)
 
 import Components.GIF (apiURL)
 
--- | Tests for the Giphy API module
+-- | Giphy API tests
 giphyAPI :: forall r. Spec r Unit
 giphyAPI =
   describe "Giphy API" do
     it "URL is correct" do
       let searchTerm = "kittens"
-          expected   = "https://api.giphy.com/v1/gifs/random" <>
-                       "?api_key=dc6zaTOxFJmzC" <>
-                       "&tag=kittens"
+          expected   = "https://api.giphy.com/v1/gifs/random"
+                       <> "?api_key=dc6zaTOxFJmzC"
+                       <> "&tag=kittens"
       (apiURL searchTerm) `shouldEqual` expected
 
 main :: Eff (RunnerEffects ()) Unit
