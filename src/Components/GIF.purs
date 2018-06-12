@@ -118,9 +118,9 @@ ui =
               [ HH.div_
                   [ HH.div [ HP.classes [ HB.notification, HB.isInfo ] ]
                       [ HH.button [ HP.class_ HB.delete ] []
-                      , HH.text "I found this GIF for you!"
+                      , HH.text $ "I found this \"" <> searchTerm <> "\" GIF for you!"
                       ]
-                  , HH.figure [ HP.classes [ HB.figure, HB.is3By2 ] ]
+                  , HH.figure [ HP.classes [ HB.image, HB.is3By2 ] ]
                       [ HH.img
                           [ HP.alt title
                           , HP.src image_url

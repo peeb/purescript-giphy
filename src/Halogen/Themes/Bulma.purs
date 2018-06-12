@@ -83,6 +83,9 @@ is2 = ClassName "is-2"
 is3 :: ClassName
 is3 = ClassName "is-3"
 
+is3By2 :: ClassName
+is3By2 = ClassName "is-3by2"
+
 is4 :: ClassName
 is4 = ClassName "is-4"
 
@@ -91,9 +94,6 @@ is5 = ClassName "is-5"
 
 is6 :: ClassName
 is6 = ClassName "is-6"
-
-is3By2 :: ClassName
-is3By2 = ClassName "is-3by2"
 
 isActive :: ClassName
 isActive = ClassName "is-active"
