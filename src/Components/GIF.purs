@@ -2,59 +2,44 @@ module Components.GIF where
 
 import Prelude
 
-import Control.Monad.Aff (Aff)
-import Control.Monad.Except (runExcept)
+import Data.Argonaut (class DecodeJson, (.?), decodeJson)
 import Data.Either (Either(..))
-import Data.Foreign.Class (class Decode, decode)
-import Data.Foreign.Generic (defaultOptions, genericDecode)
-import Data.Foreign.Generic.Types (Options)
-import Data.Generic.Rep (class Generic)
-import Data.Generic.Rep.Show (genericShow)
 import Data.Maybe (Maybe(..))
+import Effect.Aff (Aff)
 import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
 import Halogen.Themes.Bulma as HB
 import Network.HTTP.Affjax as AX
+import Network.HTTP.Affjax.Response as AXResponse
 
 type APIKey = String
 type SearchTerm = String
 
-decoderOptions :: Options
-decoderOptions = defaultOptions { unwrapSingleConstructors = true }
-
-newtype GiphyResponse = GiphyResponse { data :: GIF }
-
-derive instance genericGiphyResponse :: Generic GiphyResponse _
-
-instance decodeGiphyResponse :: Decode GiphyResponse where
-  decode = genericDecode decoderOptions
-
-instance showGiphyResponse :: Show GiphyResponse where
-  show = genericShow
-
 newtype GIF =
-  GIF { image_url :: AX.URL
-      , title :: String
+  GIF { title :: String
+      , url :: AX.URL
       }
 
-derive instance genericGIF :: Generic GIF _
-
-instance decodeGIF :: Decode GIF where
-  decode = genericDecode decoderOptions
-
-instance showGIF :: Show GIF where
-  show = genericShow
+instance decodeJsonGIF :: DecodeJson GIF where
+  decodeJson json = do
+    o <- decodeJson json
+    title <- o .? "title"
+    url <- o .? "image_url"
+    pure $ GIF { title, url }
 
 -- | Get a random `GIF` for the given search term
-getRandomGIF :: forall eff. SearchTerm -> Aff (ajax :: AX.AJAX | eff) (Maybe GIF)
+getRandomGIF :: SearchTerm -> Aff (Maybe GIF)
 getRandomGIF searchTerm = do
-  response <- AX.get $ apiURL searchTerm
-  let result = runExcept $ decode response.response
+  response <- AX.get AXResponse.json $ apiURL searchTerm
+  let result = do
+        o <- decodeJson response.response
+        d <- o .? "data"
+        decodeJson d
   pure $ case result of
-    Right (GiphyResponse { data: gif }) -> Just gif
-    Left _ -> Nothing
+    Right (GIF gif) -> Just $ GIF gif
+    Left _          -> Nothing
 
 apiURL :: SearchTerm -> AX.URL
 apiURL searchTerm =
@@ -74,7 +59,7 @@ data Query a
   = SetSearchTerm SearchTerm a
   | MakeRequest a
 
-ui :: forall eff. H.Component HH.HTML Query Unit Void (Aff (ajax :: AX.AJAX | eff))
+ui :: H.Component HH.HTML Query Unit Void Aff
 ui =
   H.component
     { initialState: const initialState
@@ -105,7 +90,7 @@ ui =
           ]
       , HH.div [ HP.class_ HB.control ]
           [ HH.button
-              [ HP.classes [ HB.button, HB.isPrimary ]
+              [ HP.classes [ HB.button, HB.isLarge, HB.isPrimary ]
               , HP.disabled isLoading
               , HE.onClick $ HE.input_ MakeRequest
               ]
@@ -114,16 +99,16 @@ ui =
       , HH.div [ HP.class_ HB.container ]
           case result of
             Nothing -> []
-            Just (GIF { image_url, title }) ->
+            Just (GIF { title, url }) ->
               [ HH.div_
                   [ HH.div [ HP.classes [ HB.notification, HB.isInfo ] ]
                       [ HH.button [ HP.class_ HB.delete ] []
-                      , HH.text $ "I found this \"" <> searchTerm <> "\" GIF for you!"
+                      , HH.text $ "I found this " <> searchTerm <> " GIF for you!"
                       ]
                   , HH.figure [ HP.classes [ HB.image, HB.is3By2 ] ]
                       [ HH.img
                           [ HP.alt title
-                          , HP.src image_url
+                          , HP.src url
                           , HP.title title
                           ]
                       ]
@@ -131,14 +116,15 @@ ui =
               ]
       ]
 
-  eval :: Query ~> H.ComponentDSL State Query Void (Aff (ajax :: AX.AJAX | eff))
+
+  eval :: Query ~> H.ComponentDSL State Query Void Aff
   eval = case _ of
     SetSearchTerm searchTerm next -> do
-      H.modify $ _ { searchTerm = searchTerm }
+      H.modify_ $ _ { searchTerm = searchTerm }
       pure next
     MakeRequest next -> do
-      H.modify $ _ { isLoading = true }
+      H.modify_ $ _ { isLoading = true }
       searchTerm <- H.gets _.searchTerm
       result <- H.liftAff $ getRandomGIF searchTerm
-      H.modify $ _ { isLoading = false, result = result }
+      H.modify_ $ _ { isLoading = false, result = result }
       pure next

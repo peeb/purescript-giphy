@@ -4,14 +4,14 @@
 
 ## Pre-requisites
 
-This project depends on [Node][] and the [Yarn][] package manager.
+This project depends on [Node][].
 
 Before proceeding, make sure these are both installed.
 
 ## Install
 
 ```shell
-yarn install
+npm install
 ```
 
 ## Build
@@ -19,7 +19,7 @@ yarn install
 To build the project once:
 
 ```shell
-yarn build
+npm run build
 ```
 Open the app in a browser:
 
@@ -32,8 +32,7 @@ open dist/index.html
 To run the project's tests:
 
 ```shell
-yarn test
+npm test
 ```
 
 [node]: https://nodejs.org/
-[yarn]: https://yarnpkg.com/
