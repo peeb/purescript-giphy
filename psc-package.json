@@ -5,7 +5,7 @@
   "depends": [
     "prelude",
     "affjax",
-    "argonaut",
+    "argonaut-codecs",
     "halogen",
     "psci-support",
     "spec"

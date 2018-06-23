@@ -2,7 +2,7 @@ module Components.GIF where
 
 import Prelude
 
-import Data.Argonaut (class DecodeJson, (.?), decodeJson)
+import Data.Argonaut.Decode (class DecodeJson, (.?), decodeJson)
 import Data.Either (Either(..))
 import Data.Maybe (Maybe(..))
 import Effect.Aff (Aff)

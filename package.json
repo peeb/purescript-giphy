@@ -3,7 +3,7 @@
   "scripts": {
     "build": "pulp build --to dist/js/bundle.js",
     "clean": "rimraf dist/js output",
-    "postinstall": "bower cache clean && bower install",
+    "postinstall": "psc-package install",
     "repl": "pulp psci",
     "start": "pulp --watch build --to dist/js/bundle.js",
     "test": "pulp test"
