@@ -24,9 +24,9 @@ newtype GIF =
 
 instance decodeJsonGIF :: DecodeJson GIF where
   decodeJson json = do
-    o <- decodeJson json
-    title <- o .? "title"
-    url <- o .? "image_url"
+    obj <- decodeJson json
+    title <- obj .? "title"
+    url <- obj .? "image_url"
     pure $ GIF { title, url }
 
 -- | Get a random `GIF` for the given search term
@@ -34,12 +34,12 @@ getRandomGIF :: SearchTerm -> Aff (Maybe GIF)
 getRandomGIF searchTerm = do
   response <- AX.get AXResponse.json $ apiURL searchTerm
   let result = do
-        o <- decodeJson response.response
-        d <- o .? "data"
-        decodeJson d
+        obj <- decodeJson response.response
+        gif <- obj .? "data"
+        decodeJson gif
   pure $ case result of
     Right (GIF gif) -> Just $ GIF gif
-    Left _          -> Nothing
+    Left _ -> Nothing
 
 apiURL :: SearchTerm -> AX.URL
 apiURL searchTerm =
@@ -51,8 +51,8 @@ apiURL searchTerm =
 
 type State =
   { isLoading :: Boolean
-  , searchTerm :: SearchTerm
   , result :: Maybe GIF
+  , searchTerm :: SearchTerm
   }
 
 data Query a
@@ -115,7 +115,6 @@ ui =
                   ]
               ]
       ]
-
 
   eval :: Query ~> H.ComponentDSL State Query Void Aff
   eval = case _ of
