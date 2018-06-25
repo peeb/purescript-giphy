@@ -55,9 +55,18 @@ type State =
   , searchTerm :: SearchTerm
   }
 
+initialState :: State
+initialState =
+  { isLoading: false
+  , result: Nothing
+  , searchTerm: ""
+  }
+
 data Query a
   = SetSearchTerm SearchTerm a
   | MakeRequest a
+
+type DSL = H.ComponentDSL State Query Void Aff
 
 ui :: H.Component HH.HTML Query Unit Void Aff
 ui =
@@ -68,12 +77,6 @@ ui =
     , receiver: const Nothing
     }
   where
-  initialState :: State
-  initialState =
-    { isLoading: false
-    , searchTerm: ""
-    , result: Nothing
-    }
 
   render :: State -> H.ComponentHTML Query
   render { isLoading, result, searchTerm } =
@@ -116,7 +119,7 @@ ui =
               ]
       ]
 
-  eval :: Query ~> H.ComponentDSL State Query Void Aff
+  eval :: Query ~> DSL
   eval = case _ of
     SetSearchTerm searchTerm next -> do
       H.modify_ $ _ { searchTerm = searchTerm }
