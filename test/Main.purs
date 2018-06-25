@@ -9,6 +9,7 @@ import Test.Spec.Assertions (shouldEqual)
 import Test.Spec.Reporter.Console (consoleReporter)
 import Test.Spec.Runner (run)
 
+
 -- | Giphy API tests
 giphyAPI :: Spec Unit
 giphyAPI =

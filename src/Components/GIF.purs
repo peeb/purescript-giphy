@@ -14,6 +14,9 @@ import Halogen.Themes.Bulma as HB
 import Network.HTTP.Affjax as AX
 import Network.HTTP.Affjax.Response as AXResponse
 
+
+-- Giphy API
+
 type APIKey = String
 type SearchTerm = String
 
@@ -48,6 +51,9 @@ apiURL searchTerm =
     apiKey  = "dc6zaTOxFJmzC"
   in
   baseURL <> "?api_key=" <> apiKey <> "&tag=" <> searchTerm
+
+
+-- Halogen Component
 
 type State =
   { isLoading :: Boolean

@@ -2,6 +2,7 @@ module Halogen.Themes.Bulma where
 
 import Halogen.HTML (ClassName(..))
 
+
 button :: ClassName
 button = ClassName "button"
 
