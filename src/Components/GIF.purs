@@ -112,7 +112,8 @@ ui =
             Nothing -> []
             Just (GIF { title, url }) ->
               [ HH.div_
-                  [ HH.div [ HP.classes [ HB.notification, HB.isInfo ] ]
+                  [ HH.br_
+                  , HH.div [ HP.classes [ HB.notification, HB.isInfo ] ]
                       [ HH.button [ HP.class_ HB.delete ] []
                       , HH.text $ "I found this " <> searchTerm <> " GIF for you!"
                       ]
