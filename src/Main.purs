@@ -8,6 +8,7 @@ import Halogen.Aff (awaitBody, runHalogenAff)
 import Halogen.VDom.Driver (runUI)
 
 
+-- | Run the app
 main :: Effect Unit
 main = runHalogenAff do
   body <- awaitBody

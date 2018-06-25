@@ -1,6 +1,5 @@
 /.*
 !/.gitignore
-/bower_components/
 /dist/js/
 /output/
 /node_modules/
