@@ -66,9 +66,11 @@ data Query a
   = SetSearchTerm SearchTerm a
   | MakeRequest a
 
-type DSL = H.ComponentDSL State Query Void Aff
+type SimpleComponent = H.Component HH.HTML Query Unit Void Aff
+type SimpleComponentDSL = H.ComponentDSL State Query Void Aff
+type SimpleComponentHTML = H.ComponentHTML Query
 
-ui :: H.Component HH.HTML Query Unit Void Aff
+ui :: SimpleComponent
 ui =
   H.component
     { initialState: const initialState
@@ -78,7 +80,7 @@ ui =
     }
   where
 
-  render :: State -> H.ComponentHTML Query
+  render :: State -> SimpleComponentHTML
   render { isLoading, result, searchTerm } =
     HH.section [ HP.class_ HB.container ] $
       [ HH.div [ HP.class_ HB.field ]
@@ -119,7 +121,7 @@ ui =
               ]
       ]
 
-  eval :: Query ~> DSL
+  eval :: Query ~> SimpleComponentDSL
   eval = case _ of
     SetSearchTerm searchTerm next -> do
       H.modify_ $ _ { searchTerm = searchTerm }

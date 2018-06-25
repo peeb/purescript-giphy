@@ -2,7 +2,7 @@
 
 ## Overview
 
-Find a random GIF using the [Giphy][] API.
+Find a random (type-safe!) GIF using the [Giphy][] API.
 
 ## Pre-requisites
 
