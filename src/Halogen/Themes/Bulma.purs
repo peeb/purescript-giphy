@@ -111,6 +111,9 @@ isDanger = ClassName "is-danger"
 isDark :: ClassName
 isDark = ClassName "is-dark"
 
+isFluid :: ClassName
+isFluid = ClassName "is-fluid"
+
 isFocused :: ClassName
 isFocused = ClassName "is-focused"
 

@@ -2,7 +2,8 @@
 
 ## Overview
 
-Find a random (type-safe!) GIF using the [Giphy][] API.
+Find a random (type-safe!) GIF using the PureScript [Halogen][] UI library and
+the [Giphy][] API.
 
 ## Pre-requisites
 
@@ -37,4 +38,5 @@ npm test
 ```
 
 [giphy]: https://giphy.com/
+[halogen]: https://github.com/slamdata/purescript-halogen
 [node.js]: https://nodejs.org/

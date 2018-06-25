@@ -6,7 +6,6 @@
     "affjax",
     "argonaut",
     "halogen",
-    "halogen-css",
     "prelude",
     "psci-support",
     "spec"
