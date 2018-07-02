@@ -12,7 +12,7 @@ import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
 import Halogen.Themes.Bulma as HB
 import Network.HTTP.Affjax as AX
-import Network.HTTP.Affjax.Response as AXR
+import Network.HTTP.Affjax.Response as AXResponse
 
 
 -- Giphy API
@@ -20,10 +20,10 @@ import Network.HTTP.Affjax.Response as AXR
 type APIKey = String
 type SearchTerm = String
 
-newtype GIF =
-  GIF { title :: String
-      , url :: AX.URL
-      }
+newtype GIF = GIF
+  { title :: String
+  , url :: AX.URL
+  }
 
 instance decodeJsonGIF :: DecodeJson GIF where
   decodeJson json = do
@@ -35,7 +35,7 @@ instance decodeJsonGIF :: DecodeJson GIF where
 -- | Get a random `GIF` for the given search term
 getRandomGIF :: SearchTerm -> Aff (Maybe GIF)
 getRandomGIF searchTerm = do
-  response <- AX.get AXR.json $ apiURL searchTerm
+  response <- AX.get AXResponse.json $ apiURL searchTerm
   let result = do
         obj <- decodeJson response.response
         gif <- obj .? "data"
