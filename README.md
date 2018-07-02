@@ -7,12 +7,12 @@ the [Giphy][] API.
 
 ## Pre-requisites
 
-This project depends on [Node.js][].
+This project depends on [Node.js][] and the [Yarn][] package manager.
 
 ## Install
 
 ```shell
-npm install
+yarn
 ```
 
 ## Build
@@ -20,13 +20,13 @@ npm install
 To build the app:
 
 ```shell
-npm run build
+yarn build
 ```
 
 Now open the app in a browser:
 
 ```shell
-open dist/index.html
+yarn open
 ```
 
 ## Test
@@ -34,9 +34,10 @@ open dist/index.html
 To run the app's tests:
 
 ```shell
-npm test
+yarn test
 ```
 
 [giphy]: https://giphy.com/
 [halogen]: https://github.com/slamdata/purescript-halogen
 [node.js]: https://nodejs.org/
+[yarn]: https://yarnpkg.com/
