@@ -6,8 +6,10 @@
     "open": "opener dist/index.html",
     "postinstall": "psc-package install",
     "repl": "pulp psci",
+    "server": "pulp server",
     "start": "pulp --watch build --to dist/js/bundle.js",
-    "test": "pulp test"
+    "test": "pulp test",
+    "updates": "psc-package updates"
   },
   "devDependencies": {
     "opener": "^1.4.3",

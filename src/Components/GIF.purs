@@ -17,13 +17,10 @@ import Network.HTTP.Affjax.Response as AXResponse
 
 -- Giphy API
 
-type APIKey = String
-type SearchTerm = String
-
-newtype GIF = GIF
-  { title :: String
-  , url :: AX.URL
-  }
+newtype GIF =
+  GIF { title :: String
+      , url :: String
+      }
 
 instance decodeJsonGIF :: DecodeJson GIF where
   decodeJson json = do
@@ -33,9 +30,9 @@ instance decodeJsonGIF :: DecodeJson GIF where
     pure $ GIF { title, url }
 
 -- | Get a random `GIF` for the given search term
-getRandomGIF :: SearchTerm -> Aff (Maybe GIF)
-getRandomGIF searchTerm = do
-  response <- AX.get AXResponse.json $ apiURL searchTerm
+getRandomGIF :: String -> Aff (Maybe GIF)
+getRandomGIF s = do
+  response <- AX.get AXResponse.json $ apiURL s
   let result = do
         obj <- decodeJson response.response
         gif <- obj .? "data"
@@ -44,7 +41,7 @@ getRandomGIF searchTerm = do
     Right (GIF gif) -> Just $ GIF gif
     Left _ -> Nothing
 
-apiURL :: SearchTerm -> AX.URL
+apiURL :: String -> String
 apiURL searchTerm =
   let
     baseURL = "https://api.giphy.com/v1/gifs/random"
@@ -58,7 +55,7 @@ apiURL searchTerm =
 type State =
   { isLoading :: Boolean
   , result :: Maybe GIF
-  , searchTerm :: SearchTerm
+  , searchTerm :: String
   }
 
 initialState :: State
@@ -69,14 +66,10 @@ initialState =
   }
 
 data Query a
-  = SetSearchTerm SearchTerm a
+  = SetSearchTerm String a
   | MakeRequest a
 
-type Component = H.Component HH.HTML Query Unit Void Aff
-type ComponentDSL = H.ComponentDSL State Query Void Aff
-type ComponentHTML = H.ComponentHTML Query
-
-ui :: Component
+ui :: H.Component HH.HTML Query Unit Void Aff
 ui =
   H.component
     { initialState: const initialState
@@ -86,7 +79,7 @@ ui =
     }
   where
 
-  render :: State -> ComponentHTML
+  render :: State -> H.ComponentHTML Query
   render { isLoading, result, searchTerm } =
     HH.section [ HP.class_ HB.container ]
       [ HH.div [ HP.class_ HB.field ]
@@ -113,10 +106,6 @@ ui =
             Just (GIF { title, url }) ->
               [ HH.div_
                   [ HH.br_
-                  , HH.div [ HP.classes [ HB.notification, HB.isInfo ] ]
-                      [ HH.button [ HP.class_ HB.delete ] []
-                      , HH.text $ "I found this " <> searchTerm <> " GIF for you!"
-                      ]
                   , HH.figure [ HP.classes [ HB.image, HB.is3By2 ] ]
                       [ HH.img
                           [ HP.alt title
@@ -128,14 +117,15 @@ ui =
               ]
       ]
 
-  eval :: Query ~> ComponentDSL
-  eval = case _ of
-    SetSearchTerm searchTerm next -> do
-      H.modify_ $ _ { searchTerm = searchTerm }
-      pure next
-    MakeRequest next -> do
-      H.modify_ $ _ { isLoading = true }
-      searchTerm <- H.gets _.searchTerm
-      result <- H.liftAff $ getRandomGIF searchTerm
-      H.modify_ $ _ { isLoading = false, result = result }
-      pure next
+  eval :: Query ~> H.ComponentDSL State Query Void Aff
+  eval =
+    case _ of
+      SetSearchTerm searchTerm next -> do
+        H.modify_ $ _ { searchTerm = searchTerm }
+        pure next
+      MakeRequest next -> do
+        H.modify_ $ _ { isLoading = true }
+        searchTerm <- H.gets _.searchTerm
+        result <- H.liftAff $ getRandomGIF searchTerm
+        H.modify_ $ _ { isLoading = false, result = result }
+        pure next
