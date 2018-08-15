@@ -2,53 +2,43 @@ module Components.GIF where
 
 import Prelude
 
-import Data.Argonaut (class DecodeJson, (.?), decodeJson)
 import Data.Either (Either(..))
+import Data.List.NonEmpty (NonEmptyList)
 import Data.Maybe (Maybe(..))
 import Effect.Aff (Aff)
+import Foreign (Foreign, ForeignError)
 import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
 import Halogen.Themes.Bulma as HB
-import Network.HTTP.Affjax as AX
-import Network.HTTP.Affjax.Response as AXResponse
-
+import Milkis as M
+import Milkis.Impl.Window (windowFetch)
+import Simple.JSON as JSON
+import Utils (apiURL)
 
 -- Giphy API
 
-newtype GIF =
-  GIF { title :: String
-      , url :: String
-      }
+type GiphyResponse = { data :: GIF }
 
-instance decodeJsonGIF :: DecodeJson GIF where
-  decodeJson json = do
-    obj <- decodeJson json
-    title <- obj .? "title"
-    url <- obj .? "image_url"
-    pure $ GIF { title, url }
+type GIF =
+  { image_url :: String
+  , title :: String
+  }
+
+fetch :: M.Fetch
+fetch = M.fetch windowFetch
+
+decodeToGiphyResponse :: Foreign -> Either (NonEmptyList ForeignError) GiphyResponse
+decodeToGiphyResponse = JSON.read
 
 -- | Get a random `GIF` for the given search term
 getRandomGIF :: String -> Aff (Maybe GIF)
 getRandomGIF s = do
-  response <- AX.get AXResponse.json $ apiURL s
-  let result = do
-        obj <- decodeJson response.response
-        gif <- obj .? "data"
-        decodeJson gif
-  pure $ case result of
-    Right (GIF gif) -> Just $ GIF gif
+  response <- M.json =<< fetch (M.URL $ apiURL s) M.defaultFetchOptions
+  pure $ case decodeToGiphyResponse response of
+    Right { data: gif } -> Just gif
     Left _ -> Nothing
-
-apiURL :: String -> String
-apiURL searchTerm =
-  let
-    baseURL = "https://api.giphy.com/v1/gifs/random"
-    apiKey  = "dc6zaTOxFJmzC"
-  in
-  baseURL <> "?api_key=" <> apiKey <> "&tag=" <> searchTerm
-
 
 -- Halogen Component
 
@@ -103,13 +93,13 @@ ui =
       , HH.div [ HP.class_ HB.container ]
           case result of
             Nothing -> []
-            Just (GIF { title, url }) ->
+            Just { image_url, title } ->
               [ HH.div_
                   [ HH.br_
                   , HH.figure [ HP.classes [ HB.image, HB.is3By2 ] ]
                       [ HH.img
                           [ HP.alt title
-                          , HP.src url
+                          , HP.src image_url
                           , HP.title title
                           ]
                       ]
