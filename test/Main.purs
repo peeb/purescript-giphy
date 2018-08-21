@@ -6,20 +6,22 @@ import Data.Array ((!!), head)
 import Data.Maybe (Maybe(..))
 import Data.String (Pattern(..), contains, split)
 import Effect (Effect)
+import Giphy (getURL)
+import Network.HTTP.Affjax (URL)
 import Test.QuickCheck ((===))
 import Test.Spec (Spec, describe, it)
 import Test.Spec.Assertions (shouldEqual)
 import Test.Spec.QuickCheck (quickCheck)
 import Test.Spec.Reporter.Console (consoleReporter)
 import Test.Spec.Runner (run)
-import Utils (apiURL)
 
 giphyAPI :: Spec Unit
 giphyAPI =
   let
-      testURL = apiURL "cute kittens"
+      testURL :: URL
+      testURL = getURL "cute kittens"
   in
-  describe "Giphy API" do
+  describe "Giphy API URL" do
     it "is secure" do
       let parts = split (Pattern ":") testURL
       head parts `shouldEqual` (Just "https")
@@ -32,7 +34,7 @@ giphyAPI =
     it "contains tag" $
       quickCheck \tag -> do
         let pattern = Pattern $ "&tag=" <> tag
-            url = apiURL tag
+            url = getURL tag
         contains pattern url === true
 
 main :: Effect Unit

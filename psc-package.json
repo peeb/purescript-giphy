@@ -1,12 +1,10 @@
 {
   "name": "gif-o-matic",
-  "set": "psc-0.12.0-20180814",
+  "set": "psc-0.12.0-20180819",
   "source": "https://github.com/purescript/package-sets.git",
   "depends": [
-    "aff",
+    "affjax",
     "halogen",
-    "milkis",
-    "prelude",
     "psci-support",
     "simple-json",
     "spec-quickcheck",
