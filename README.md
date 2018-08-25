@@ -12,7 +12,7 @@ This project depends on [Node.js][] and the [Yarn][] package manager.
 ## Install
 
 ```shell
-yarn
+make install
 ```
 
 ## Build
@@ -20,13 +20,13 @@ yarn
 To build the app:
 
 ```shell
-yarn build
+make
 ```
 
 Now open the app in a browser:
 
 ```shell
-yarn open
+make open
 ```
 
 ## Test
@@ -34,7 +34,7 @@ yarn open
 To run the app's tests:
 
 ```shell
-yarn test
+make test
 ```
 
 [giphy]: https://giphy.com/
