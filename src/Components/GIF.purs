@@ -4,7 +4,7 @@ import Prelude
 
 import Data.Maybe (Maybe(..))
 import Effect.Aff (Aff)
-import Giphy (GIF, SearchTerm, getRandom)
+import Giphy (GIF, getRandom)
 import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
@@ -14,7 +14,7 @@ import Halogen.Themes.Bulma as HB
 type State =
   { gif :: Maybe GIF
   , isLoading :: Boolean
-  , searchTerm :: SearchTerm
+  , searchTerm :: String
   }
 
 initialState :: State
@@ -25,7 +25,7 @@ initialState =
   }
 
 data Query a
-  = SetSearchTerm SearchTerm a
+  = SetSearchTerm String a
   | MakeRequest a
 
 ui :: H.Component HH.HTML Query Unit Void Aff
